@@ -24,10 +24,12 @@
 #include "bacnet/basic/object/device.h"
 #include "bacnet/basic/object/ai.h"
 #include "bacnet/basic/object/ao.h"
+#include "bacnet/basic/object/bo.h"
+#include "bacnet/basic/object/bi.h"
 #include "bacnet/datalink/datalink.h"
 #include "bacnet/datalink/dlenv.h"
 
-static const char *Device_Name = "BACnet Smart Sensor (B-SS)";
+static const char *Device_Name = "BACnet ESUDAroc Device (B-ED)";
 #define SENSOR_ID 1
 
 /* table of default point names and units */
@@ -41,11 +43,11 @@ struct BACnetObjectTable {
 };
 static struct BACnetObjectTable Object_Table[] = {
     { OBJECT_ANALOG_INPUT, SENSOR_ID, UNITS_DEGREES_CELSIUS, 25.0f,
-      "Indoor Air Temperature", "indoor air temperature" },
-    { OBJECT_ANALOG_OUTPUT, 1, UNITS_DEGREES_ANGULAR, 0.0f, "VAV Actuator",
-      "variable air valve actuator" },
-    { OBJECT_ANALOG_OUTPUT, 2, UNITS_DEGREES_CELSIUS, 25.0f,
-      "Temperature Setpoint", "indoor air temperature setpoint" },
+      "outdoor Air Temperature", "outdoor air temperature" },
+    { OBJECT_BINARY_OUTPUT, 1, UNITS_NO_UNITS, 0.0f,
+        "LAMP1", "réseaux de lampadaire n°1" },
+    { OBJECT_BINARY_OUTPUT, 2, UNITS_NO_UNITS, 0.0f,
+        "LAMP2", "réseaux de lampadaire n°1" },
 };
 /* timer for Sensor Update Interval */
 static struct mstimer Sensor_Update_Timer;
@@ -83,6 +85,15 @@ static void BACnet_Object_Table_Init(void *context)
                 Analog_Output_Units_Set(
                     Object_Table[i].instance, Object_Table[i].units);
                 Analog_Output_Description_Set(
+                    Object_Table[i].instance, Object_Table[i].description);
+                break;
+            case OBJECT_BINARY_OUTPUT:
+                Binary_Output_Create(Object_Table[i].instance);
+                Binary_Output_Name_Set(
+                    Object_Table[i].instance, Object_Table[i].name);
+                Binary_Output_Relinquish_Default_Set(
+                    Object_Table[i].instance, Object_Table[i].value);
+                Binary_Output_Description_Set(
                     Object_Table[i].instance, Object_Table[i].description);
                 break;
             default:
