@@ -53,7 +53,7 @@ TARGET_BIN = ${TARGET}$(TARGET_EXT)
 #
 # Set CROSS_PREFIX to prepend to all compiler tools at once for easier
 # cross-compilation.
-CROSS_PREFIX ?=arm-linux-gnueabihf-
+CROSS_PREFIX ?=aarch64-linux-gnu-
 CC           = $(CROSS_PREFIX)gcc
 AR           = $(CROSS_PREFIX)ar
 RANLIB       = $(CROSS_PREFIX)ranlib
