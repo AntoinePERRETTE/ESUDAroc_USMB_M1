@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 /* BACnet Stack defines - first */
 #include "bacnet/bacdef.h"
 /* BACnet Stack API */
@@ -48,6 +49,10 @@ static struct BACnetObjectTable Object_Table[] = {
         "LAMP1", "réseaux de lampadaire n°1" },
     { OBJECT_BINARY_OUTPUT, 2, UNITS_NO_UNITS, 0.0f,
         "LAMP2", "réseaux de lampadaire n°1" },
+    { OBJECT_BINARY_OUTPUT, 3, UNITS_NO_UNITS, 0.0f,
+        "LAMP3", "réseaux de lampadaire n°1" },
+    { .type = OBJECT_CALENDAR,
+       .name = "SCHEDULE", .description = "calendrier de contrôle des lampadaires" },
 };
 /* timer for Sensor Update Interval */
 static struct mstimer Sensor_Update_Timer;
@@ -95,6 +100,11 @@ static void BACnet_Object_Table_Init(void *context)
                     Object_Table[i].instance, Object_Table[i].value);
                 Binary_Output_Description_Set(
                     Object_Table[i].instance, Object_Table[i].description);
+                break;
+            case OBJECT_CALENDAR:
+                Calendar_Create(Object_Table[i].instance);
+                Calendar_Name_Set(
+                    Object_Table[i].instance, Object_Table[i].name);
                 break;
             default:
                 break;
