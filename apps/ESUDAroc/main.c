@@ -27,6 +27,7 @@
 #include "bacnet/basic/object/ao.h"
 #include "bacnet/basic/object/bo.h"
 #include "bacnet/basic/object/bi.h"
+#include "bacnet/basic/object/calendar.h"
 #include "bacnet/datalink/datalink.h"
 #include "bacnet/datalink/dlenv.h"
 
@@ -51,9 +52,12 @@ static struct BACnetObjectTable Object_Table[] = {
         "LAMP2", "réseaux de lampadaire n°1" },
     { OBJECT_BINARY_OUTPUT, 3, UNITS_NO_UNITS, 0.0f,
         "LAMP3", "réseaux de lampadaire n°1" },
-    { .type = OBJECT_CALENDAR,
+    { .type = OBJECT_CALENDAR, .instance = 1,
        .name = "SCHEDULE", .description = "calendrier de contrôle des lampadaires" },
 };
+
+static BACNET_CALENDAR_ENTRY * Schedule = NULL;
+
 /* timer for Sensor Update Interval */
 static struct mstimer Sensor_Update_Timer;
 
@@ -105,6 +109,9 @@ static void BACnet_Object_Table_Init(void *context)
                 Calendar_Create(Object_Table[i].instance);
                 Calendar_Name_Set(
                     Object_Table[i].instance, Object_Table[i].name);
+                Calendar_Date_List_Add(Object_Table[i].instance, Schedule);
+                Calendar_Description_Set(
+                    Object_Table[i].instance, Object_Table[i].description);
                 break;
             default:
                 break;
